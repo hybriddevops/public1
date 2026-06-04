@@ -12,7 +12,6 @@ on:
         description: 'Change description'
         required: true
         default: 'Manual change request opened via GitHub Actions'
-
 jobs:
   Change:
     name: Open ServiceNow Change Request From Velocity
@@ -52,6 +51,4 @@ jobs:
         run: |
           echo "Change Request Number: ${{ steps.create.outputs.change-request-number }}"
           echo "Change Request Sys ID: ${{ steps.create.outputs.change-request-sys-id }}"
-
-
 
