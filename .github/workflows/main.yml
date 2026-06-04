@@ -30,7 +30,7 @@ env:
   instance-url: ${{ secrets.SN_INSTANCE_URL }}
   tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
   context-github: ${{ toJSON(github) }}
-  environment: ${{github.event.inputs.environment}}
+    #  environment: ${{github.event.inputs.environment}}
   environment: "deployment_gate"
   
 jobs:
