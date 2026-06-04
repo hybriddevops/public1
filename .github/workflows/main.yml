@@ -32,7 +32,7 @@ jobs:
           instance-url: ${{ secrets.SN_INSTANCE_URL }}
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
-          job-name: 'Open ServiceNow Change Request'
+          job-name: Open ServiceNow Change Request
           change-request: >
             {
               "attributes": {
@@ -42,7 +42,7 @@ jobs:
                 "implementation_plan": "Manual change executed via GitHub Actions.",
                 "backout_plan": "Revert manually if required.",
                 "test_plan": "Verify change outcome manually.",
-                "requested_by": {"name": "System Administrator"},
+                "requested_by": {"name": "System Administrator"}
               }
             }
           interval: '100'
