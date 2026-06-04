@@ -1,0 +1,105 @@
+---
+name: OpenServiceNowChangeRequestGate
+
+on:
+  workflow_dispatch:
+    inputs:
+      short_description:
+        description: 'Change short description'
+        required: true
+        default: 'Manual Change Request'
+      description:
+        description: 'Change description'
+        required: true
+        default: 'Manual change request opened via GitHub Actions'
+
+jobs:
+  # ── Job 1: Create CR — blocks only until CR is confirmed created ──────
+  openChange:
+    name: OpenServiceNowChangeRequestGate
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    outputs:
+      change-number: ${{ steps.create.outputs.change-request-number }}
+      change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
+    steps:
+      - name: Open ServiceNow Change Request - Gate
+        uses: ServiceNow/servicenow-devops-change@v6.1.0
+        id: create
+        with:
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          context-github: ${{ toJSON(github) }}
+          job-name: 'Open ServiceNow Change Request GATE'
+          change-request: >
+            {
+              "setCloseCode": "true",
+              "autoCloseChange": true,
+              "attributes": {
+                "short_description": "${{ github.event.inputs.short_description }}",
+                "description": "${{ github.event.inputs.description }}",
+                "assignment_group": "a715cd759f2002002920bde8132e7018",
+                "implementation_plan": "Manual change executed via GitHub Actions.",
+                "backout_plan": "Revert manually if required.",
+                "test_plan": "Verify change outcome manually."
+              }
+            }
+          interval: '100'
+          timeout: '3600'
+          changeCreationTimeOut: '3600'
+          abortOnChangeCreationFailure: true
+          abortOnChangeStepTimeout: true
+
+      - name: Confirm Change Created
+        run: |
+          echo "============================================"
+          echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
+          echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
+          echo "============================================"
+#          if [ -z "${{ steps.create.outputs.change-request-number }}" ]; then
+#          echo "ERROR: CR not created — aborting"
+#            exit 1
+#          fi
+
+#  # ── Job 2: Dedicated gate job — registers callback and waits ─────────
+#  waitForApproval:
+#    name: Wait for ServiceNow Implement State
+#    needs: [openChange]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Wait for Change to reach Implement state
+#        uses: ServiceNow/servicenow-devops-change@v6.1.0
+#        with:
+#          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+#          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+#          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+#          context-github: ${{ toJSON(github) }}
+#          job-name: 'Wait for ServiceNow Implement State'
+#          # ✅ deployment-gate lives here — dedicated job owns the wait
+#          # deployment-gate: '{"environment":"Velocity","JobName":"DeploymentGate"}'
+#          interval: '10'
+#          timeout: '3600'
+#
+#  # ── Job 3: Zero-cost GitHub environment gate ──────────────────────────
+#  DeploymentGate:
+#    name: ServiceNow Deployment Gate
+#    needs: openChange
+#    runs-on: ubuntu-latest
+#    environment:
+#      name: Velocity
+#    steps:
+#      - name: Gate Cleared
+#        run: |
+#          echo "Change ${{ needs.openChange.outputs.change-number }} approved"
+#
+#  # ── Job 4: Deploy after both gate and wait confirm ────────────────────
+#  deploy:
+#    name: Deploy
+#    needs: [openChange, waitForApproval, DeploymentGate]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Run Deployment
+#        run: |
+#          echo "Deploying under: ${{ needs.openChange.outputs.change-number }}"
