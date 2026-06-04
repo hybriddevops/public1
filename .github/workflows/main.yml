@@ -30,12 +30,14 @@ env:
   instance-url: ${{ secrets.SN_INSTANCE_URL }}
   tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
   context-github: ${{ toJSON(github) }}
+  environment: ${{github.event.inputs.environment}}
+  environment: "deployment_gate"
   
 jobs:
   openChange:
     name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
-    environment: ${{github.event.inputs.environment}}
+    environment: ${{env.environment}}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
