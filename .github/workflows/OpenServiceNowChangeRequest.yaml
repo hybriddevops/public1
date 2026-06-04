@@ -40,7 +40,7 @@ jobs:
                 "backout_plan": "Revert manually if required.",
                 "test_plan": "Verify change outcome manually."
               }
- }
+            }
           interval: '100'
           timeout: '3600'
           changeCreationTimeOut: '3600'
