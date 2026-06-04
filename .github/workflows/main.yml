@@ -35,8 +35,6 @@ jobs:
           job-name: 'Open ServiceNow Change Request'
           change-request: >
             {
-              "setCloseCode": "true",
-              "autoCloseChange": "false",
               "attributes": {
                 "short_description": "${{ github.event.inputs.short_description }}",
                 "description": "${{ github.event.inputs.description }}",
