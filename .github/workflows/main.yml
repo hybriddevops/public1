@@ -6,7 +6,7 @@ on:
     branches: ["main"]
   workflow_dispatch:
     inputs:
-     short_description:
+      short_description:
         description: 'Change short description'
         required: true
         default: 'Manual Change Request'
