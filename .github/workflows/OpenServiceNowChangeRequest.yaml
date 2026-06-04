@@ -19,7 +19,7 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
-      - name: Open ServiceNow Change Request
+      - name: Open ServiceNow Change Request From Velocity
         uses: ServiceNow/servicenow-devops-change@v6.1.0
         id: create
         with:
