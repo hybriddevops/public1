@@ -67,48 +67,5 @@ jobs:
           echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
           echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
           echo "============================================"
-#          if [ -z "${{ steps.create.outputs.change-request-number }}" ]; then
-#          echo "ERROR: CR not created — aborting"
-#            exit 1
-#          fi
 
-#  # ── Job 2: Dedicated gate job — registers callback and waits ─────────
-#  waitForApproval:
-#    name: Wait for ServiceNow Implement State
-#    needs: [openChange]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Wait for Change to reach Implement state
-#        uses: ServiceNow/servicenow-devops-change@v6.1.0
-#        with:
-#          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
-#          instance-url: ${{ secrets.SN_INSTANCE_URL }}
-#          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-#          context-github: ${{ toJSON(github) }}
-#          job-name: 'Wait for ServiceNow Implement State'
-#          # ✅ deployment-gate lives here — dedicated job owns the wait
-#          # deployment-gate: '{"environment":"Velocity","JobName":"DeploymentGate"}'
-#          interval: '10'
-#          timeout: '3600'
-#
-#  # ── Job 3: Zero-cost GitHub environment gate ──────────────────────────
-#  DeploymentGate:
-#    name: ServiceNow Deployment Gate
-#    needs: openChange
-#    runs-on: ubuntu-latest
-#    environment:
-#      name: Velocity
-#    steps:
-#      - name: Gate Cleared
-#        run: |
-#          echo "Change ${{ needs.openChange.outputs.change-number }} approved"
-#
-#  # ── Job 4: Deploy after both gate and wait confirm ────────────────────
-#  deploy:
-#    name: Deploy
-#    needs: [openChange, waitForApproval, DeploymentGate]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Run Deployment
-#        run: |
-#          echo "Deploying under: ${{ needs.openChange.outputs.change-number }}"
+
