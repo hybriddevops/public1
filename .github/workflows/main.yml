@@ -69,9 +69,18 @@ jobs:
           changeCreationTimeOut: '3600'
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
+          deployment-gate: '{"environment":"deployment_gate","jobName":"Deploy"}'
 
       - name: Output Change Details
         run: |
           echo "Change Request Number: ${{ steps.create.outputs.change-request-number }}"
           echo "Change Request Sys ID: ${{ steps.create.outputs.change-request-sys-id }}"
 
+  Deploy:
+    name: 'Deploy'
+    needs: openChange
+    runs-on: ubuntu-latest
+    environment: deployment_gate
+    steps:
+      - name: Run deployment Scripts
+        run: echo Completed Deployement
