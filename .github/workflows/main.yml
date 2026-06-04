@@ -6,16 +6,7 @@ on:
     branches: ["main"]
   workflow_dispatch:
     inputs:
-      environment:
-        description: 'Target environment'
-        required: true
-        type: choice
-        options:
-          - Development
-          - Staging
-          - deployment_gate
-        default: 'deployment_gate'
-      short_description:
+     short_description:
         description: 'Change short description'
         required: true
         default: 'Manual Change Request'
@@ -29,7 +20,6 @@ jobs:
   openChange:
     name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
-    # ❌ No environment: here — gate must not fire before CR is created
     outputs:
       change-number: ${{ steps.create.outputs.change-request-number }}
       change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
@@ -66,16 +56,16 @@ jobs:
           # ✅ Capital J in JobName, matches Deploy job ID below
           deployment-gate: '{"environment":"deployment_gate","JobName":"Deploy"}'
 
-      - name: Output Change Details
-        run: |
-          echo "============================================"
-          echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
-          echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
-          echo "============================================"
-          if [ -z "${{ steps.create.outputs.change-request-number }}" ]; then
-            echo "ERROR: No change number returned — aborting"
-            exit 1
-          fi
+#      - name: Output Change Details
+#        run: |
+#          echo "============================================"
+#          echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
+#          echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
+#          echo "============================================"
+#          if [ -z "${{ steps.create.outputs.change-request-number }}" ]; then
+#            echo "ERROR: No change number returned — aborting"
+#            exit 1
+#          fi
 
   # ── Job 2: Gate — SN approves this when CR hits Implement state ───────
   Deploy:
