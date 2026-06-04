@@ -35,14 +35,15 @@ jobs:
           job-name: Open ServiceNow Change Request
           change-request: >
             {
+              "setCloseCode": "true",
+              "autoCloseChange": true,
               "attributes": {
                 "short_description": "${{ github.event.inputs.short_description }}",
                 "description": "${{ github.event.inputs.description }}",
                 "assignment_group": "a715cd759f2002002920bde8132e7018",
                 "implementation_plan": "Manual change executed via GitHub Actions.",
                 "backout_plan": "Revert manually if required.",
-                "test_plan": "Verify change outcome manually.",
-                "requested_by": {"name": "System Administrator"}
+                "test_plan": "Verify change outcome manually."
               }
             }
           interval: '100'
@@ -50,9 +51,7 @@ jobs:
           changeCreationTimeOut: '3600'
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
-          # ✅ Capital J in JobName, matches Deploy job ID below
-          # deployment-gate: '{"environment":"deployment_gate","JobName":"Deploy"}'
-
+            
 #      - name: Output Change Details
 #        run: |
 #          echo "============================================"
