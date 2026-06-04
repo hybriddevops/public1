@@ -3,9 +3,7 @@ name: OpenServiceNowChangeRequestGate
 
 on:
   push:
-    branches: ["main"]      
-    environment: 'deployment_gate'
-  # Allows to run manually
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       environment:
@@ -25,28 +23,24 @@ on:
         description: 'Change description'
         required: true
         default: 'Manual change request opened via GitHub Actions'
-env:
-  devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
-  instance-url: ${{ secrets.SN_INSTANCE_URL }}
-  tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
-  context-github: ${{ toJSON(github) }}
-    #  environment: ${{github.event.inputs.environment}}
-  
+
 jobs:
+  # ── Job 1: Create the CR — no environment gate here ──────────────────
   openChange:
     name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
-    environment: deployment_gate
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    # ❌ No environment: here — gate must not fire before CR is created
+    outputs:
+      change-number: ${{ steps.create.outputs.change-request-number }}
+      change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
     steps:
       - name: Open ServiceNow Change Request
         uses: ServiceNow/servicenow-devops-change@v6.3.0
         id: create
         with:
-          devops-integration-token: ${{ env.devops-integration-token }}
-          instance-url: ${{ env.instance-url }}
-          tool-id: ${{ env.tool-id }}
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: 'Open ServiceNow Change Request'
           change-request: >
@@ -60,8 +54,8 @@ jobs:
                 "implementation_plan": "Manual change executed via GitHub Actions.",
                 "backout_plan": "Revert manually if required.",
                 "test_plan": "Verify change outcome manually.",
-                "requested_by": {"name":"System Administrator"},
-                "changeModelSysId":"930fba3cc39dc71498939b377d0131f8"
+                "requested_by": {"name": "System Administrator"},
+                "changeModelSysId": "930fba3cc39dc71498939b377d0131f8"
               }
             }
           interval: '100'
@@ -69,18 +63,29 @@ jobs:
           changeCreationTimeOut: '3600'
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
-          deployment-gate: '{"environment":"deployment_gate","jobName":"Deploy"}'
+          # ✅ Capital J in JobName, matches Deploy job ID below
+          deployment-gate: '{"environment":"deployment_gate","JobName":"Deploy"}'
 
       - name: Output Change Details
         run: |
-          echo "Change Request Number: ${{ steps.create.outputs.change-request-number }}"
-          echo "Change Request Sys ID: ${{ steps.create.outputs.change-request-sys-id }}"
+          echo "============================================"
+          echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
+          echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
+          echo "============================================"
+          if [ -z "${{ steps.create.outputs.change-request-number }}" ]; then
+            echo "ERROR: No change number returned — aborting"
+            exit 1
+          fi
 
+  # ── Job 2: Gate — SN approves this when CR hits Implement state ───────
   Deploy:
-    name: 'Deploy'
+    name: Deploy
     needs: openChange
     runs-on: ubuntu-latest
-    environment: deployment_gate
+    environment: deployment_gate   # ✅ correct place for the gate
+                                   # SN App must be a protection rule here
     steps:
-      - name: Run deployment Scripts
-        run: echo Completed Deployement
+      - name: Run Deployment Scripts
+        run: |
+          echo "Change ${{ needs.openChange.outputs.change-number }} approved"
+          echo "Completed Deployment"
