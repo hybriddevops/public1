@@ -1,0 +1,57 @@
+---
+name: OpenServiceNowChangeRequest
+
+on:
+  workflow_dispatch:
+    inputs:
+      short_description:
+        description: 'Change short description'
+        required: true
+        default: 'Manual Change Request'
+      description:
+        description: 'Change description'
+        required: true
+        default: 'Manual change request opened via GitHub Actions'
+
+jobs:
+  Change:
+    name: Open ServiceNow Change Request From Velocity
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - name: Open ServiceNow Change Request
+        uses: ServiceNow/servicenow-devops-change@v6.1.0
+        id: create
+        with:
+          devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
+          instance-url: ${{ secrets.SN_INSTANCE_URL }}
+          tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
+          context-github: ${{ toJSON(github) }}
+          job-name: 'Open ServiceNow Change Request From Velocity'
+          change-request: >
+            {
+              "setCloseCode": "true",
+              "autoCloseChange": true,
+              "attributes": {
+                "short_description": "${{ github.event.inputs.short_description }}",
+                "description": "${{ github.event.inputs.description }}",
+                "assignment_group": "a715cd759f2002002920bde8132e7018",
+                "implementation_plan": "Manual change executed via GitHub Actions.",
+                "backout_plan": "Revert manually if required.",
+                "test_plan": "Verify change outcome manually."
+              }
+ }
+          interval: '100'
+          timeout: '3600'
+          changeCreationTimeOut: '3600'
+          abortOnChangeCreationFailure: true
+          abortOnChangeStepTimeout: true
+
+      - name: Output Change Details
+        run: |
+          echo "Change Request Number: ${{ steps.create.outputs.change-request-number }}"
+          echo "Change Request Sys ID: ${{ steps.create.outputs.change-request-sys-id }}"
+
+
+
