@@ -52,7 +52,7 @@ jobs:
           change-request: >
             {
               "setCloseCode": "true",
-              "autoCloseChange": true,
+              "autoCloseChange": "false",
               "attributes": {
                 "short_description": "${{ github.event.inputs.short_description }}",
                 "description": "${{ github.event.inputs.description }}",
