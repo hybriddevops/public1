@@ -4,6 +4,7 @@ name: OpenServiceNowChangeRequestGate
 on:
   push:
     branches: ["main"]      
+    environment: 'deployment_gate'
   # Allows to run manually
   workflow_dispatch:
     inputs:
