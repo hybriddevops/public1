@@ -4,6 +4,14 @@ name: OpenServiceNowChangeRequestGate
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        type: choice
+        options:
+          - Development
+          - Staging
+          - deployment_gate    
       short_description:
         description: 'Change short description'
         required: true
@@ -18,6 +26,7 @@ jobs:
   openChange:
     name: OpenServiceNowChangeRequestGate
     runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     outputs:
