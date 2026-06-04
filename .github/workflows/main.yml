@@ -14,7 +14,8 @@ on:
         options:
           - Development
           - Staging
-          - deployment_gate    
+          - deployment_gate
+        default: 'deployment_gate'
       short_description:
         description: 'Change short description'
         required: true
