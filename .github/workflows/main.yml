@@ -22,26 +22,21 @@ on:
         default: 'Manual change request opened via GitHub Actions'
 
 jobs:
-  # ── Job 1: Create CR — blocks only until CR is confirmed created ──────
   openChange:
-    name: OpenServiceNowChangeRequestGate
+    name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-    outputs:
-      change-number: ${{ steps.create.outputs.change-request-number }}
-      change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
     steps:
-      - name: Open ServiceNow Change Request - Gate
-        uses: ServiceNow/servicenow-devops-change@v6.1.0
+      - name: Open ServiceNow Change Request
+        uses: ServiceNow/servicenow-devops-change@v6.3.0
         id: create
         with:
           devops-integration-token: ${{ secrets.SN_DEVOPS_INTEGRATION_TOKEN }}
           instance-url: ${{ secrets.SN_INSTANCE_URL }}
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
-          job-name: 'Open ServiceNow Change Request GATE'
+          job-name: 'Open ServiceNow Change Request'
           change-request: >
             {
               "setCloseCode": "true",
@@ -61,11 +56,8 @@ jobs:
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
 
-      - name: Confirm Change Created
+      - name: Output Change Details
         run: |
-          echo "============================================"
-          echo " Change Number : ${{ steps.create.outputs.change-request-number }}"
-          echo " Sys ID        : ${{ steps.create.outputs.change-request-sys-id }}"
-          echo "============================================"
-
+          echo "Change Request Number: ${{ steps.create.outputs.change-request-number }}"
+          echo "Change Request Sys ID: ${{ steps.create.outputs.change-request-sys-id }}"
 
