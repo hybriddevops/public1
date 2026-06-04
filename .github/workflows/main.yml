@@ -52,7 +52,7 @@ jobs:
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
           # ✅ Capital J in JobName, matches Deploy job ID below
-          deployment-gate: '{"environment":"deployment_gate","JobName":"Deploy"}'
+          # deployment-gate: '{"environment":"deployment_gate","JobName":"Deploy"}'
 
 #      - name: Output Change Details
 #        run: |
@@ -65,15 +65,15 @@ jobs:
 #            exit 1
 #          fi
 
-  # ── Job 2: Gate — SN approves this when CR hits Implement state ───────
-  Deploy:
-    name: Deploy
-    needs: openChange
-    runs-on: ubuntu-latest
-    environment: deployment_gate   # ✅ correct place for the gate
-                                   # SN App must be a protection rule here
-    steps:
-      - name: Run Deployment Scripts
-        run: |
-          echo "Change ${{ needs.openChange.outputs.change-number }} approved"
-          echo "Completed Deployment"
+#  # ── Job 2: Gate — SN approves this when CR hits Implement state ───────
+#  Deploy:
+#    name: Deploy
+#    needs: openChange
+#    runs-on: ubuntu-latest
+#    environment: deployment_gate   # ✅ correct place for the gate
+#                                   # SN App must be a protection rule here
+#    steps:
+#      - name: Run Deployment Scripts
+#        run: |
+#          echo "Change ${{ needs.openChange.outputs.change-number }} approved"
+#          echo "Completed Deployment"
