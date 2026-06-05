@@ -20,7 +20,6 @@ jobs:
   openChange:
     name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
-    environment: deployment_gate
     outputs:
       change-number: ${{ steps.create.outputs.change-request-number }}
       change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
@@ -39,19 +38,16 @@ jobs:
               "setCloseCode": "true",
               "autoCloseChange": true,
               "attributes": {
-                "short_description": "${{ github.event.inputs.short_description }}",
-                "description": "${{ github.event.inputs.description }}",
+                "short_description": "Pipeline test",
+                "description": "Pipeline Test",
                 "assignment_group": "a715cd759f2002002920bde8132e7018",
                 "implementation_plan": "Manual change executed via GitHub Actions.",
                 "backout_plan": "Revert manually if required.",
                 "test_plan": "Verify change outcome manually."
               }
             }
-          interval: '10'
+          interval: '100'
           timeout: '3600'
-          changeCreationTimeOut: '3600'
-          abortOnChangeCreationFailure: true
-          abortOnChangeStepTimeout: true
           deployment-gate: '{"environment":"deployment_gate", "jobName":"Deploy"}'
             
 #      - name: Output Change Details
