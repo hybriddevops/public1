@@ -43,7 +43,8 @@ jobs:
                 "assignment_group": "a715cd759f2002002920bde8132e7018",
                 "implementation_plan": "Manual change executed via GitHub Actions.",
                 "backout_plan": "Revert manually if required.",
-                "test_plan": "Verify change outcome manually."
+                "test_plan": "Verify change outcome manually.",
+                "change_model" : {"name":"devopsVelocity"}
               }
             }
           interval: '100'
