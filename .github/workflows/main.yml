@@ -33,7 +33,7 @@ jobs:
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: Open ServiceNow Change Request
-          change-request: '{"attributes":{"requested_by":{"name": "System Administrator"},"assignment_group":{"name": "Change Management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "2026-06-04 22:57:59","end_date": "2026-06-04 22:59:59","Model":{"name":"devopsVelocity"}}'
+          change-request: '{"attributes":{"requested_by":{"name": "System Administrator"},"assignment_group":{"name": "Change Management"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "2026-06-04 22:57:59","end_date": "2026-06-04 22:59:59","model_name":{"name":"devopsVelocity"}}'
 #          change-request: >
 #            {
 #              "setCloseCode": "true",
