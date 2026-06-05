@@ -46,7 +46,7 @@ jobs:
                 "test_plan": "Verify change outcome manually."
               }
             }
-          interval: '100'
+          interval: '10'
           timeout: '3600'
           changeCreationTimeOut: '3600'
           abortOnChangeCreationFailure: true
