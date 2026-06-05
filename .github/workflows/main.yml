@@ -33,22 +33,23 @@ jobs:
           tool-id: ${{ secrets.SN_ORCHESTRATION_TOOL_ID }}
           context-github: ${{ toJSON(github) }}
           job-name: Open ServiceNow Change Request
-          change-request: >
-            {
-              "setCloseCode": "true",
-              "autoCloseChange": true,
-              "attributes": {
-                "short_description": "Pipeline test",
-                "description": "Pipeline Test",
-                "assignment_group": "a715cd759f2002002920bde8132e7018",
-                "implementation_plan": "Manual change executed via GitHub Actions.",
-                "backout_plan": "Revert manually if required.",
-                "test_plan": "Verify change outcome manually.",
-                "change_model" : {"name":"devopsVelocity"}
-              }
-            }
-          interval: '100'
-          timeout: '3600'
+          change-request: '{"attributes":{"requested_by":{"name": "System Administrator"},"assignment_group":{"name": "Change Approval Team"},"priority": "2","comments": "This is a sample pipeline script to be added in your change step","work_notes": "Update this to work_notes","start_date": "2026-06-04 22:57:59","end_date": "2026-06-04 22:59:59"}}'
+#          change-request: >
+#            {
+#              "setCloseCode": "true",
+#              "autoCloseChange": true,
+#              "attributes": {
+#                "short_description": "Pipeline test",
+#                "description": "Pipeline Test",
+#                "assignment_group": "a715cd759f2002002920bde8132e7018",
+#                "implementation_plan": "Manual change executed via GitHub Actions.",
+#                "backout_plan": "Revert manually if required.",
+#                "test_plan": "Verify change outcome manually.",
+#                "change_model" : {"name":"devopsVelocity"}
+#              }
+#            }
+#          interval: '100'
+#          timeout: '3600'
           deployment-gate: '{"environment":"deployment_gate", "jobName":"Deploy"}'
             
 #      - name: Output Change Details
