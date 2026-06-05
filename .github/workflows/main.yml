@@ -20,6 +20,7 @@ jobs:
   openChange:
     name: Open ServiceNow Change Request
     runs-on: ubuntu-latest
+    environment: deployment_gate
     outputs:
       change-number: ${{ steps.create.outputs.change-request-number }}
       change-sys-id: ${{ steps.create.outputs.change-request-sys-id }}
@@ -51,7 +52,7 @@ jobs:
           changeCreationTimeOut: '3600'
           abortOnChangeCreationFailure: true
           abortOnChangeStepTimeout: true
-#          deployment-gate: '{"environment":"deployment_gate", "jobName":"Deploy"}'
+          deployment-gate: '{"environment":"deployment_gate", "jobName":"Deploy"}'
             
 #      - name: Output Change Details
 #        run: |
